@@ -11,6 +11,14 @@ class ImportPage extends StatefulWidget {
 }
 
 class _ImportPageState extends State<ImportPage> {
+  bool _loading;
+
+  @override
+  void initState() {
+    super.initState();
+    _loading = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +36,7 @@ class _ImportPageState extends State<ImportPage> {
                 child: Text("GO"),
                 color: Colors.lightBlue,
                 textColor: Colors.white,
-                onPressed: () => _importCSV(),
+                onPressed: () => _import(context),
               ),
             ],
           ),
@@ -37,33 +45,54 @@ class _ImportPageState extends State<ImportPage> {
     );
   }
 
-  void _importCSV() async {
+  void _import(context) async {
     final File file =
         await FilePicker.getFile(type: FileType.CUSTOM, fileExtension: 'csv');
-    Stream<List> inputStream = file.openRead();
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        });
+    await _importCSV(file);
+    navigateToClosedDrawerAndDictionary();
+  }
+
+  Future<void> _importCSV(file) async {
+    Stream inputStream =
+        file.openRead().transform(utf8.decoder).transform(new LineSplitter());
     List<Word> list = new List();
-    inputStream
-        .transform(utf8.decoder) // Decode bytes to UTF-8.
-        .transform(new LineSplitter()) // Convert stream to individual lines.
-        .listen((String line) {
-      List row = line.split(';'); // split by comma
-      Word word = new Word();
-      word.name = row[0];
-      word.transcription = row[1];
-      word.description = row[2];
-      list.add(word);
-    }, onDone: () {
-      for (Word w in list) {
-        DBAdapter.db.createWord(w);
+    await for (String line in inputStream) {
+      try {
+        List<String> row = line.split(';');
+        Word word = new Word();
+        word.name = _trim(row[0]);
+        word.transcription = _trim(row[1]);
+        word.description = _trim(row[2]);
+        list.add(word);
+      } catch (e) {
+        print(e.toString());
       }
-      navigateToClosedDrawerAndDictionary();
-    }, onError: (e) {
-      print(e.toString());
-    });
+    }
+    for (Word w in list) {
+      await DBAdapter.db.createWord(w);
+    }
   }
 
   void navigateToClosedDrawerAndDictionary() {
     Navigator.pop(context);
     Navigator.pop(context);
+    Navigator.pop(context);
+  }
+
+  String _trim(String row) {
+    String result = row;
+    result = result.trim();
+    if (result.length > 1 && result.startsWith('"') && result.endsWith('"')) {
+      result = result.substring(1, result.length - 1);
+    }
+    return result;
   }
 }

@@ -84,7 +84,7 @@ class DBAdapter {
 
   deleteAllWords() async {
     final db = await database;
-    db.rawDelete("DELETE * FROM Word");
+    db.rawDelete("DELETE FROM Word");
   }
 
   // ========== CRUD ========== //

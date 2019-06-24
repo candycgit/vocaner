@@ -34,6 +34,7 @@ class _CleanUpPageState extends State<CleanUpPage> {
 
   void _cleanUp() async {
     DBAdapter.db.deleteAllWords();
+    navigateToClosedDrawerAndDictionary();
   }
 
   void navigateToClosedDrawerAndDictionary() {
