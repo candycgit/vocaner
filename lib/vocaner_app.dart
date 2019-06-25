@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:vocaner/cleanup.dart';
 import 'package:vocaner/database.dart';
@@ -11,16 +12,64 @@ class VocanerApp extends StatefulWidget {
 }
 
 class _DictionaryState extends State<VocanerApp> {
+  Future<List<Word>> wordsFuture;
+  String filter = "";
+  final TextEditingController controller = new TextEditingController();
+  RestartableTimer delayOnTyping;
+
+  @override
+  void initState() {
+    wordsFuture = DBAdapter.db.getAllWords();
+
+    delayOnTyping = new RestartableTimer(Duration(milliseconds: 500), () {
+      setState(() {
+        filter = controller.text;
+        // print(filter);
+      });
+    });
+
+    controller.addListener(() {
+      delayOnTyping.reset();
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Vocaner")),
-      body: FutureBuilder<List<Word>>(
-        future: DBAdapter.db.getAllWords(),
-        builder: _buildList,
-      ),
+      body: _buildSearchBarAndList(),
       drawer: _buildDrawer(),
       floatingActionButton: _createWord(),
+    );
+  }
+
+  Widget _buildSearchBarAndList() {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: controller,
+              decoration: InputDecoration(prefixIcon: Icon(Icons.search)),
+            ),
+          ),
+          Expanded(
+            child: FutureBuilder<List<Word>>(
+              future: wordsFuture,
+              builder: _buildList,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -30,7 +79,10 @@ class _DictionaryState extends State<VocanerApp> {
         itemCount: snapshot.data.length,
         itemBuilder: (BuildContext context, int index) {
           Word word = snapshot.data[index];
-          return _buildRow(context, index, word);
+          if (filter.isEmpty || word.name.startsWith(filter)) {
+            return _buildRow(context, index, word);
+          }
+          return new Container();
         },
       );
     } else if (snapshot.hasError) {
@@ -53,7 +105,6 @@ class _DictionaryState extends State<VocanerApp> {
             word.resetStatus();
           }
           DBAdapter.db.updateWord(word);
-          setState(() {});
         },
         value: !word.isNew(),
       ),
@@ -97,7 +148,6 @@ class _DictionaryState extends State<VocanerApp> {
       child: Icon(Icons.add),
       onPressed: () async {
         _navigateToCreateWord();
-        setState(() {});
       },
     );
   }

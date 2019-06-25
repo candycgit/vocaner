@@ -11,12 +11,10 @@ class ImportPage extends StatefulWidget {
 }
 
 class _ImportPageState extends State<ImportPage> {
-  bool _loading;
 
   @override
   void initState() {
     super.initState();
-    _loading = false;
   }
 
   @override
