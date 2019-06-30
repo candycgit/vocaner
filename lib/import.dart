@@ -58,7 +58,7 @@ class _ImportPageState extends State<ImportPage> {
     navigateToClosedDrawerAndDictionary();
   }
 
-  Future<void> _importCSV(file) async {
+  Future<void> _importCSV(File file) async {
     Stream inputStream =
         file.openRead().transform(utf8.decoder).transform(new LineSplitter());
     List<Word> list = new List();
@@ -95,7 +95,6 @@ class _ImportPageState extends State<ImportPage> {
     if (result.length > 1 && result.startsWith('"') && result.endsWith('"')) {
       result = result.substring(1, result.length - 1);
     }
-    result = result.replaceAll('"', '\'').toLowerCase();
-    return result;
+    return result.replaceAll('"', '\'').toLowerCase();
   }
 }

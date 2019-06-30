@@ -2,6 +2,7 @@ import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:vocaner/cleanup.dart';
 import 'package:vocaner/database.dart';
+import 'package:vocaner/export.dart';
 import 'package:vocaner/import.dart';
 import 'package:vocaner/model.dart';
 import 'package:vocaner/word_form.dart';
@@ -131,6 +132,12 @@ class _DictionaryState extends State<VocanerApp> {
           },
         ),
         ListTile(
+          title: Text('Export'),
+          onTap: () {
+            _navigateToExport();
+          },
+        ),
+        ListTile(
           title: Text('Clean up'),
           onTap: () {
             _navigateToCleanUp();
@@ -173,6 +180,13 @@ class _DictionaryState extends State<VocanerApp> {
     Navigator.push(
       context,
       new MaterialPageRoute(builder: (context) => new ImportPage()),
+    );
+  }
+
+  void _navigateToExport() {
+    Navigator.push(
+      context,
+      new MaterialPageRoute(builder: (context) => new ExportPage()),
     );
   }
 

@@ -75,6 +75,7 @@ class _WordFormPageState extends State<WordFormPage> {
     } else {
       return null;
     }
+    word.name = word.name.replaceAll('"', '\'').toLowerCase();
     if (word.id == null) {
       DBAdapter.db.createWord(word);
     } else {
