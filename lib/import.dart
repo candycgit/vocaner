@@ -75,7 +75,11 @@ class _ImportPageState extends State<ImportPage> {
       }
     }
     for (Word w in list) {
-      await DBAdapter.db.createWord(w);
+      try {
+        await DBAdapter.db.createWord(w);
+      } catch (e) {
+        print(e.toString());
+      }
     }
   }
 
@@ -91,6 +95,7 @@ class _ImportPageState extends State<ImportPage> {
     if (result.length > 1 && result.startsWith('"') && result.endsWith('"')) {
       result = result.substring(1, result.length - 1);
     }
+    result = result.replaceAll('"', '\'').toLowerCase();
     return result;
   }
 }

@@ -12,15 +12,12 @@ class VocanerApp extends StatefulWidget {
 }
 
 class _DictionaryState extends State<VocanerApp> {
-  Future<List<Word>> wordsFuture;
   String filter = "";
   final TextEditingController controller = new TextEditingController();
   RestartableTimer delayOnTyping;
 
   @override
   void initState() {
-    wordsFuture = DBAdapter.db.getAllWords();
-
     delayOnTyping = new RestartableTimer(Duration(milliseconds: 500), () {
       setState(() {
         filter = controller.text;
@@ -64,7 +61,7 @@ class _DictionaryState extends State<VocanerApp> {
           ),
           Expanded(
             child: FutureBuilder<List<Word>>(
-              future: wordsFuture,
+              future: DBAdapter.db.getAllWords(),
               builder: _buildList,
             ),
           ),
