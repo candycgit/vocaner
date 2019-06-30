@@ -11,7 +11,6 @@ class ImportPage extends StatefulWidget {
 }
 
 class _ImportPageState extends State<ImportPage> {
-
   @override
   void initState() {
     super.initState();
@@ -46,6 +45,9 @@ class _ImportPageState extends State<ImportPage> {
   void _import(context) async {
     final File file =
         await FilePicker.getFile(type: FileType.CUSTOM, fileExtension: 'csv');
+    if (file == null) {
+      return;
+    }
     showDialog(
         context: context,
         barrierDismissible: false,

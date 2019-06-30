@@ -1,6 +1,7 @@
 import 'dart:io';
-import 'package:file_picker/file_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:vocaner/database.dart';
 import 'package:vocaner/model.dart';
 
@@ -10,6 +11,8 @@ class ExportPage extends StatefulWidget {
 }
 
 class _ExportPageState extends State<ExportPage> {
+  static final formatter = new DateFormat('yyyyMMddHHmmss');
+
   @override
   void initState() {
     super.initState();
@@ -25,7 +28,8 @@ class _ExportPageState extends State<ExportPage> {
             child: Container(
           child: Column(
             children: [
-              Text('Click the button to select folder for CSV file',
+              Text(
+                  'Click the button to create CSV file in the application directory',
                   style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
               Text(
                   'CSV format: "name";"transription";"description";"date";"status".'),
@@ -43,8 +47,6 @@ class _ExportPageState extends State<ExportPage> {
   }
 
   void _export(context) async {
-    final File folder =
-        await FilePicker.getFile(type: FileType.CUSTOM, fileExtension: 'csv');
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -53,7 +55,11 @@ class _ExportPageState extends State<ExportPage> {
             child: CircularProgressIndicator(),
           );
         });
-    File file = File(folder.path + DateTime.now().toString() + '.csv');
+    Directory directory = await getApplicationDocumentsDirectory();
+    String timestamp = formatter.format(DateTime.now()).toString();
+    String filePath = directory.path + '/' + timestamp + '.csv';
+    File file = new File(filePath);
+    print(filePath);
     await _exportCSV(file);
     navigateToClosedDrawerAndDictionary();
   }
