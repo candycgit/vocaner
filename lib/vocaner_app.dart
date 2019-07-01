@@ -103,6 +103,7 @@ class _DictionaryState extends State<VocanerApp> {
             word.resetStatus();
           }
           DBAdapter.db.updateWord(word);
+          setState(() {});
         },
         value: !word.isNew(),
       ),
