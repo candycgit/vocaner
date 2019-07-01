@@ -55,9 +55,9 @@ class _ExportPageState extends State<ExportPage> {
             child: CircularProgressIndicator(),
           );
         });
-    Directory directory = await getApplicationDocumentsDirectory();
+    Directory directory = await getExternalStorageDirectory();
     String timestamp = formatter.format(DateTime.now()).toString();
-    String filePath = directory.path + '/' + timestamp + '.csv';
+    String filePath = directory.path + '/Download/' + timestamp + '.csv';
     File file = new File(filePath);
     print(filePath);
     await _exportCSV(file);
