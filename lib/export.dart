@@ -28,8 +28,7 @@ class _ExportPageState extends State<ExportPage> {
             child: Container(
           child: Column(
             children: [
-              Text(
-                  'Click the button to create CSV file in the application directory',
+              Text('Click the button to create CSV file in download directory',
                   style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
               Text(
                   'CSV format: "name";"transription";"description";"date";"status".'),

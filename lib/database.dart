@@ -100,6 +100,18 @@ class DBAdapter {
     return id;
   }
 
+  createFullWord(Word w) async {
+    final db = await database;
+    var nextId = (await db.rawQuery("SELECT MAX(id)+1 as nextId FROM Word"))
+        .first["nextId"];
+    var id = await db.rawInsert(
+        "INSERT INTO Word (id,name,transcription,description,date,status)"
+        " VALUES (?,?,?,?,?,?)",
+        [nextId, w.name, w.transcription, w.description, w.date, w.status]);
+    print("Word has been created with id = " + id.toString());
+    return id;
+  }
+
   getWord(int id) async {
     final db = await database;
     var result = await db.query("Word", where: "id = ?", whereArgs: [id]);
