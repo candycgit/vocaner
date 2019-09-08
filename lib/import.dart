@@ -40,7 +40,7 @@ class _ImportPageState extends State<ImportPage> {
                     style:
                         TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
                 Text(
-                    'CSV format: "name";"transription";"description";date;"status".'),
+                    'CSV format: "name";"transription";"description";"date";"status".'),
                 RaisedButton(
                   child: Text("GO"),
                   color: Colors.lightBlue,

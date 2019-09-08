@@ -28,7 +28,7 @@ class _ExportPageState extends State<ExportPage> {
             child: Container(
           child: Column(
             children: [
-              Text('Click the button to create CSV file in download directory',
+              Text('Click the button to create CSV file in the application directory',
                   style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic)),
               Text(
                   'CSV format: "name";"transription";"description";"date";"status".'),
@@ -56,7 +56,7 @@ class _ExportPageState extends State<ExportPage> {
         });
     Directory directory = await getExternalStorageDirectory();
     String timestamp = formatter.format(DateTime.now()).toString();
-    String filePath = directory.path + '/Download/' + timestamp + '.csv';
+    String filePath = directory.path + '/' + timestamp + '.csv';
     File file = new File(filePath);
     print(filePath);
     await _exportCSV(file);
