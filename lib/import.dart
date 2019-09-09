@@ -83,7 +83,7 @@ class _ImportPageState extends State<ImportPage> {
         Word word = new Word();
         word.name = _trim(row[0]);
         word.transcription = _trim(row[1]);
-        word.description = _trim(row[2]);
+        word.description = _trimDescription(row[2]);
         list.add(word);
       } catch (e) {
         print(e.toString());
@@ -126,7 +126,7 @@ class _ImportPageState extends State<ImportPage> {
         Word word = new Word();
         word.name = _trim(row[0]);
         word.transcription = _trim(row[1]);
-        word.description = _trim(row[2]);
+        word.description = _trimDescription(row[2]);
         word.date = _trim(row[3]);
         word.status = int.parse(_trim(row[4]));
         list.add(word);
@@ -143,12 +143,6 @@ class _ImportPageState extends State<ImportPage> {
     }
   }
 
-  void navigateToClosedDrawerAndDictionary() {
-    Navigator.pop(context);
-    Navigator.pop(context);
-    Navigator.pop(context);
-  }
-
   String _trim(String row) {
     String result = row;
     result = result.trim();
@@ -156,5 +150,16 @@ class _ImportPageState extends State<ImportPage> {
       result = result.substring(1, result.length - 1);
     }
     return result.replaceAll('"', '\'').toLowerCase();
+  }
+
+  String _trimDescription(String row) {
+    String result = _trim(row);
+    return result.replaceAll('\'', '');
+  }
+
+  void navigateToClosedDrawerAndDictionary() {
+    Navigator.pop(context);
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 }

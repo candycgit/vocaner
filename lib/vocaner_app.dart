@@ -5,6 +5,7 @@ import 'package:vocaner/database.dart';
 import 'package:vocaner/export.dart';
 import 'package:vocaner/import.dart';
 import 'package:vocaner/model.dart';
+import 'package:vocaner/remember.dart';
 import 'package:vocaner/word_form.dart';
 
 class VocanerApp extends StatefulWidget {
@@ -119,7 +120,9 @@ class _DictionaryState extends State<VocanerApp> {
       children: <Widget>[
         ListTile(
           title: Text('Remember'),
-          onTap: () {},
+          onTap: () {
+            _navigateToRemember();
+          },
         ),
         ListTile(
           title: Text('Repeat'),
@@ -177,6 +180,13 @@ class _DictionaryState extends State<VocanerApp> {
     );
   }
 
+  void _navigateToRemember() {
+    Navigator.push(
+      context,
+      new MaterialPageRoute(builder: (context) => new RememberPage()),
+    );
+  }
+
   void _navigateToImport() {
     Navigator.push(
       context,
@@ -197,4 +207,5 @@ class _DictionaryState extends State<VocanerApp> {
       new MaterialPageRoute(builder: (context) => new CleanUpPage()),
     );
   }
+
 }

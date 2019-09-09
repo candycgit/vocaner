@@ -63,18 +63,17 @@ class DBAdapter {
 
   Future<List<Word>> getAllWords() async {
     final db = await database;
-    var result =
-        await db.rawQuery('SELECT * FROM Word ORDER BY id ASC');
+    var result = await db.rawQuery('SELECT * FROM Word ORDER BY id ASC');
     List<Word> list =
         result.isNotEmpty ? result.map((w) => Word.fromMap(w)).toList() : [];
     print("Words read: " + list.length.toString());
     return list;
   }
 
-  Future<List<Word>> getNewWords() async {
+  Future<List<Word>> getNewWords(int n) async {
     final db = await database;
     var result = await db.rawQuery(
-        'SELECT * FROM Word WHERE status = 0 ORDER BY date DESC, id DESC');
+        'SELECT * FROM Word WHERE status = 0 ORDER BY RANDOM() LIMIT ?', [n]);
     List<Word> list =
         result.isNotEmpty ? result.map((w) => Word.fromMap(w)).toList() : [];
     print("Words read: " + list.length.toString());
@@ -122,7 +121,7 @@ class DBAdapter {
     final db = await database;
     var result =
         await db.update("Word", w.toMap(), where: "id = ?", whereArgs: [w.id]);
-    print("Word has been updated");
+    print("Word has been updated with id = " + w.id.toString());
     return result;
   }
 
