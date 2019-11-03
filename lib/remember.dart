@@ -10,6 +10,7 @@ class RememberPage extends StatefulWidget {
 class _RememberPageState extends State<RememberPage> {
   final _formKey = new GlobalKey<FormState>();
   Future _future;
+  final Map<int, String> dragMap = {};
 
   @override
   void initState() {
@@ -47,7 +48,7 @@ class _RememberPageState extends State<RememberPage> {
     List<int> ids = [];
 
     _prepareAgenda(children, words, ids);
-    // TODO _prepare translation test
+    _prepareTranslationTest(children, words, ids);
     _prepareWritingTest(children, words, ids);
 
     _prepareSubmit(children, words, ids);
@@ -77,8 +78,68 @@ class _RememberPageState extends State<RememberPage> {
     ));
   }
 
+  void _prepareTranslationTest(
+      List<Widget> children, List<Word> words, List<int> ids) {
+    words.shuffle();
+    List<Widget> sourceColumnChildren = new List();
+    for (Word word in words) {
+      sourceColumnChildren.add(Draggable(
+        child: Container(alignment: Alignment.center, child: Text(word.name)),
+        data: word,
+        feedback:
+            Container(alignment: Alignment.center, child: Text(word.name)),
+        childWhenDragging:
+            Container(color: Colors.grey, height: 50, width: 100),
+      ));
+    }
+    Column sourceColumn = Column(
+      children: sourceColumnChildren,
+    );
+
+    words.shuffle();
+    List<Widget> targetColumnChildren = new List();
+    for (Word word in words) {
+      targetColumnChildren.add(
+        Container(alignment: Alignment.center, child: Text(word.description)),
+      );
+      targetColumnChildren.add(DragTarget(
+        builder: (BuildContext context, List<Word> candidateData,
+            List rejectedData) {
+          if (dragMap.containsKey(word.id)) {
+            return Container(
+                alignment: Alignment.center, child: Text(dragMap[word.id]));
+          }
+          return Container(color: Colors.grey, height: 50, width: 100);
+        },
+        onWillAccept: (Word candidate) {
+          if (dragMap.containsKey(word.id)) {
+            return false;
+          }
+          return true;
+        },
+        onAccept: (Word candidate) {
+          dragMap[word.id] = candidate.name;
+          if (word.id != candidate.id) {
+            ids.remove(word.id);
+            ids.remove(candidate.id);
+          }
+        },
+      ));
+    }
+    Column targetColumn = Column(
+      children: targetColumnChildren,
+    );
+
+    children.add(Padding(
+        padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
+        child: Row(
+          children: [sourceColumn, targetColumn],
+        )));
+  }
+
   void _prepareWritingTest(
       List<Widget> children, List<Word> words, List<int> ids) {
+    words.shuffle();
     for (Word word in words) {
       children.add(Padding(
           padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
