@@ -63,7 +63,7 @@ class DBAdapter {
 
   Future<List<Word>> getAllWords() async {
     final db = await database;
-    var result = await db.rawQuery('SELECT * FROM Word ORDER BY id ASC');
+    var result = await db.rawQuery('SELECT * FROM Word ORDER BY name ASC');
     List<Word> list =
         result.isNotEmpty ? result.map((w) => Word.fromMap(w)).toList() : [];
     print("Words read: " + list.length.toString());

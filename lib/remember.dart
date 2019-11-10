@@ -83,58 +83,114 @@ class _RememberPageState extends State<RememberPage> {
     words.shuffle();
     List<Widget> sourceColumnChildren = new List();
     for (Word word in words) {
-      sourceColumnChildren.add(Draggable(
-        child: Container(alignment: Alignment.center, child: Text(word.name)),
-        data: word,
-        feedback:
-            Container(alignment: Alignment.center, child: Text(word.name)),
-        childWhenDragging:
-            Container(color: Colors.grey, height: 50, width: 100),
-      ));
+      sourceColumnChildren.add(_draggable(word));
     }
     Column sourceColumn = Column(
       children: sourceColumnChildren,
     );
-
     words.shuffle();
     List<Widget> targetColumnChildren = new List();
     for (Word word in words) {
-      targetColumnChildren.add(
-        Container(alignment: Alignment.center, child: Text(word.description)),
-      );
-      targetColumnChildren.add(DragTarget(
-        builder: (BuildContext context, List<Word> candidateData,
-            List rejectedData) {
-          if (dragMap.containsKey(word.id)) {
-            return Container(
-                alignment: Alignment.center, child: Text(dragMap[word.id]));
-          }
-          return Container(color: Colors.grey, height: 50, width: 100);
-        },
-        onWillAccept: (Word candidate) {
-          if (dragMap.containsKey(word.id)) {
-            return false;
-          }
-          return true;
-        },
-        onAccept: (Word candidate) {
-          dragMap[word.id] = candidate.name;
-          if (word.id != candidate.id) {
-            ids.remove(word.id);
-            ids.remove(candidate.id);
-          }
-        },
-      ));
+      targetColumnChildren.add(_dragTarget(word, ids));
     }
     Column targetColumn = Column(
       children: targetColumnChildren,
     );
-
     children.add(Padding(
         padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
         child: Row(
           children: [sourceColumn, targetColumn],
         )));
+  }
+
+
+
+  Draggable<Word> _draggable(Word word) {
+    return Draggable(
+      child: Container(
+        alignment: Alignment.center,
+        child: Text(word.name,
+            textAlign: TextAlign.center, style: TextStyle(fontSize: 15)),
+        decoration: BoxDecoration(
+          color: Colors.amber,
+          borderRadius: BorderRadius.all(new Radius.circular(20.0)),
+        ),
+        margin: EdgeInsets.only(bottom: 30.0),
+        height: 60,
+        width: 150,
+      ),
+      childWhenDragging: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.grey,
+          borderRadius: BorderRadius.all(new Radius.circular(20.0)),
+        ),
+        margin: EdgeInsets.only(bottom: 30.0),
+        height: 60,
+        width: 150,
+      ),
+      data: word,
+      feedback: Container(
+        alignment: Alignment.center,
+        child: Text(word.name,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 15,
+                color: Colors.black,
+                decoration: TextDecoration.none)),
+        decoration: BoxDecoration(
+          color: Colors.amber,
+          borderRadius: BorderRadius.all(new Radius.circular(20.0)),
+        ),
+        height: 60,
+        width: 150,
+      ),
+    );
+  }
+
+  DragTarget<Word> _dragTarget(Word word, List<int> ids) {
+    return DragTarget(
+      builder: (BuildContext context, List<Word> candidateData,
+          List rejectedData) {
+        if (dragMap.containsKey(word.id)) {
+          return Container(
+            alignment: Alignment.center,
+            child: Text(dragMap[word.id], textAlign: TextAlign.center),
+            decoration: BoxDecoration(
+              color: Colors.amber,
+              borderRadius: BorderRadius.all(new Radius.circular(20.0)),
+            ),
+            margin: EdgeInsets.only(bottom: 10.0, left: 10.0),
+            height: 80,
+            width: 210,
+          );
+        }
+        return Container(
+          alignment: Alignment.center,
+          child: Text(word.description, textAlign: TextAlign.center),
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            borderRadius: BorderRadius.all(new Radius.circular(20.0)),
+          ),
+          margin: EdgeInsets.only(bottom: 10.0, left: 10.0),
+          height: 80,
+          width: 210,
+        );
+      },
+      onWillAccept: (Word candidate) {
+        if (dragMap.containsKey(word.id)) {
+          return false;
+        }
+        return true;
+      },
+      onAccept: (Word candidate) {
+        dragMap[word.id] = candidate.name;
+        if (word.id != candidate.id) {
+          ids.remove(word.id);
+          ids.remove(candidate.id);
+        }
+      },
+    );
   }
 
   void _prepareWritingTest(
