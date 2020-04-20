@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:vocaner/database.dart';
 import 'package:vocaner/model.dart';
@@ -56,19 +55,11 @@ class _ImportPageState extends State<ImportPage> {
   }
 
   void _import(context) async {
-    final File file =
-        await FilePicker.getFile(type: FileType.CUSTOM, fileExtension: 'csv');
+    final File file = null;
+    // TODO
     if (file == null) {
       return;
     }
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        });
     await _importCSV(file);
     navigateToClosedDrawerAndDictionary();
   }
@@ -99,19 +90,11 @@ class _ImportPageState extends State<ImportPage> {
   }
 
   void _importEnhanced(context) async {
-    final File file =
-        await FilePicker.getFile(type: FileType.CUSTOM, fileExtension: 'csv');
+    final File file = null;
+    // TODO
     if (file == null) {
       return;
     }
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        });
     await _importCSVEnhanced(file);
     navigateToClosedDrawerAndDictionary();
   }
