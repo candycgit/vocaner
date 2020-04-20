@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:vocaner/database.dart';
 import 'package:vocaner/model.dart';
@@ -10,6 +12,8 @@ class ImportPage extends StatefulWidget {
 }
 
 class _ImportPageState extends State<ImportPage> {
+  static final formatter = new DateFormat('yyyyMMdd');
+
   @override
   void initState() {
     super.initState();
@@ -55,12 +59,15 @@ class _ImportPageState extends State<ImportPage> {
   }
 
   void _import(context) async {
-    final File file = null;
-    // TODO
-    if (file == null) {
-      return;
-    }
-    await _importCSV(file);
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        });
+    await _importCSV(await _getFile());
     navigateToClosedDrawerAndDictionary();
   }
 
@@ -90,12 +97,16 @@ class _ImportPageState extends State<ImportPage> {
   }
 
   void _importEnhanced(context) async {
-    final File file = null;
-    // TODO
-    if (file == null) {
-      return;
-    }
-    await _importCSVEnhanced(file);
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        });
+
+    await _importCSVEnhanced(await _getFile());
     navigateToClosedDrawerAndDictionary();
   }
 
@@ -124,6 +135,15 @@ class _ImportPageState extends State<ImportPage> {
         print(e.toString());
       }
     }
+  }
+
+  Future<File> _getFile() async {
+    Directory directory = await getExternalStorageDirectory();
+    String timestamp = formatter.format(DateTime.now()).toString();
+    String filePath = directory.path + '/' + timestamp + '.csv';
+    File file = new File(filePath);
+    print(filePath);
+    return file;
   }
 
   String _trim(String row) {
